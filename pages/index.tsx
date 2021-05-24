@@ -8,20 +8,15 @@ import Button from "../components/Button";
 import { GetCovidData } from "../lib/posts";
 
 const Index: NextPage = () => {
-  console.log(GetCovidData());
+  const [data, setData] = React.useState<Object>(null);
 
-  // // 副作用フック
-  // React.useEffect(() => {
-  //   // mount時
-  //   alert("mouted");
-  //   // 副作用フック（アンマウント時）
-  //   return () => alert("cleanup");
-  // }, []);
+  React.useEffect(() => {
+    GetCovidData().then((r) => {
+      setData(r.itemList);
+    });
+  }, []);
 
-  // // 副作用フック（依存の変更時）
-  // React.useEffect(()=>{
-  //     alert('counted')
-  // },[count])
+  console.log(data);
 
   return (
     <>
@@ -29,8 +24,17 @@ const Index: NextPage = () => {
         <title>My page title</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <h1>test</h1>
-      <Button label="ボタンだよ" onClick={() => alert("押した")} />
+      <h1>愛知県の陽性者</h1>
+
+      {data
+        ? Object.keys(data).map((key) => (
+            <p>
+              日付：{data[key].date}
+              <br></br>
+              累計陽性者：{data[key].npatients}
+            </p>
+          ))
+        : ""}
     </>
   );
 };
